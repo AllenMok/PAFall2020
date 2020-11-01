@@ -43,28 +43,43 @@ def main():
     
     otFile = "_Opentable_TS.csv"
     try:
-        Opentable_NYC_TS = pd.read_csv('NYC'+otFile,names=['date','percnetage'])
+        NYC_Opentable_TS = pd.read_csv('NYC'+otFile,names=['date','percnetage'])
 
     except:    
         opentable('YoY_Seated_Diner_Data.csv','city','New York','NYC'+otFile)
-        Opentable_NYC_TS = pd.read_csv('NYC'+otFile,names=['date','percnetage'])
+        NYC_Opentable_TS = pd.read_csv('NYC'+otFile,names=['date','percnetage'])
 
     try:
-        Opentable_LA_TS = pd.read_csv('LA'+otFile,names=['date','percnetage'])
+        LA_Opentable_TS = pd.read_csv('LA'+otFile,names=['date','percnetage'])
         
     except:    
         opentable('YoY_Seated_Diner_Data.csv','city','Los Angeles','LA'+otFile)
-        Opentable_LA_TS = pd.read_csv('LA'+otFile,names=['date','percnetage'])
+        LA_Opentable_TS = pd.read_csv('LA'+otFile,names=['date','percnetage'])
     
-    plot_df(LA_Case_TS, x=LA_Case_TS['date'], y=LA_Case_TS['cases'].rolling(7).mean(), title='LA_COVID') #rolling 
-    plot_df(NYC_Case_TS, x=NYC_Case_TS['date'], y=NYC_Case_TS['cases'].rolling(7).mean(), title='NYC_COVID')
-    plot_df(NYC_Car_TS, x=NYC_Car_TS['date'], y=NYC_Car_TS['cases'].rolling(7).mean(), title='NYC_Car')
-    plot_df(LA_Car_TS, x=LA_Car_TS['date'], y=LA_Car_TS['cases'].rolling(7).mean(), title='LA_Car')
-    plot_df(Opentable_NYC_TS, x=Opentable_NYC_TS['date'], y=Opentable_NYC_TS['percnetage'].rolling(7).mean(), title='NYC_'+'Opentable_TS')
-    plot_df(Opentable_LA_TS, x=Opentable_LA_TS['date'], y=Opentable_LA_TS['percnetage'].rolling(7).mean(), title='LA_'+'_OpentableTS')
+    # plot_df(LA_Case_TS, x=LA_Case_TS['date'], y=LA_Case_TS['cases'].rolling(7).mean(), title='LA_COVID') #rolling 
+    # plot_df(NYC_Case_TS, x=NYC_Case_TS['date'], y=NYC_Case_TS['cases'].rolling(7).mean(), title='NYC_COVID')
+    # plot_df(NYC_Car_TS, x=NYC_Car_TS['date'], y=NYC_Car_TS['cases'].rolling(7).mean(), title='NYC_Car')
+    # plot_df(LA_Car_TS, x=LA_Car_TS['date'], y=LA_Car_TS['cases'].rolling(7).mean(), title='LA_Car')
+    # plot_df(Opentable_NYC_TS, x=Opentable_NYC_TS['date'], y=Opentable_NYC_TS['percnetage'].rolling(7).mean(), title='NYC_'+'Opentable_TS')
+    # plot_df(Opentable_LA_TS, x=Opentable_LA_TS['date'], y=Opentable_LA_TS['percnetage'].rolling(7).mean(), title='LA_'+'_OpentableTS')
     
+    plot_df_2var(NYC_Car_TS,NYC_Opentable_TS, x1=NYC_Car_TS['date'], y1=NYC_Car_TS['cases'].rolling(7).mean(),x2=NYC_Opentable_TS['date'], y2=NYC_Opentable_TS['percnetage'].rolling(7).mean(), title='NYC OpenTable VS Vehicl Crashes')
+    plot_df_2var(LA_Car_TS,LA_Opentable_TS, x1=LA_Car_TS['date'], y1=LA_Car_TS['cases'].rolling(7).mean(),x2=LA_Opentable_TS['date'], y2=LA_Opentable_TS['percnetage'].rolling(7).mean(), title='LA OpenTable VS Vehicl Crashes')
     
-def plot_df(df, x, y, title='', xlabel='Cases', ylabel='Time', dpi=100):
+def plot_df_2var(df1,df2, x1, y1, x2, y2, title='', xlabel='Time', ylabel='Cases', dpi=100):
+    plt.figure(figsize=(15,4), dpi=dpi)
+    ax1= plt.gca()
+    ax2= ax1.twinx()
+    ax1.plot(x1, y1, color='red') 
+    ax2.plot(x1, y2, color='green') 
+    
+    ax1.set(title=title, xlabel=xlabel, ylabel=ylabel)
+    ax1.xaxis.set_major_locator(ticker.MultipleLocator(10))
+    plt.gcf().autofmt_xdate() #
+    plt.savefig(title+'.png',format = 'png')
+    # plt.show()
+
+def plot_df(df, x, y, title='', xlabel='Time', ylabel='Cases', dpi=100):
     plt.figure(figsize=(15,4), dpi=dpi)
     plt.plot(x, y, color='red') 
     ax= plt.gca()
