@@ -28,6 +28,13 @@ def main():
         getTransTSFile('LA_2020.csv','LA'+carFile,'LA')
         LA_Car_TS = pd.read_csv('LA'+carFile,names=['date','cases'])
 
+    try:
+        FL_Car_TS = pd.read_csv('FL'+carFile,names=['date','cases'])
+    except:
+        print('FileNotExistError')
+    
+    # print(FL_Car_TS)
+
     caseFile = '_Case_TS.csv'
     try:
         NYC_Case_TS = pd.read_csv('NYC'+caseFile,names=['date','cases'])
@@ -40,22 +47,33 @@ def main():
     except :
         getCaseTSFile('LA','LA'+caseFile,'United_States_COVID-19_Cases_and_Deaths_by_State_over_Time.csv')
         LA_Case_TS = pd.read_csv('LA'+caseFile,names=['date','cases'])
-    
+
+    try:
+        FL_Case_TS = pd.read_csv('FL'+caseFile,names=['date','cases'])
+    except :
+        getCaseTSFile('FL','FL'+caseFile,'United_States_COVID-19_Cases_and_Deaths_by_State_over_Time.csv')
+        FL_Case_TS = pd.read_csv('FL'+caseFile,names=['date','cases'])
+
     otFile = "_Opentable_TS.csv"
+    
     try:
         NYC_Opentable_TS = pd.read_csv('NYC'+otFile,names=['date','percnetage'])
-
     except:    
         opentable('YoY_Seated_Diner_Data.csv','city','New York','NYC'+otFile)
         NYC_Opentable_TS = pd.read_csv('NYC'+otFile,names=['date','percnetage'])
 
     try:
-        LA_Opentable_TS = pd.read_csv('LA'+otFile,names=['date','percnetage'])
-        
+        LA_Opentable_TS = pd.read_csv('LA'+otFile,names=['date','percnetage'])   
     except:    
         opentable('YoY_Seated_Diner_Data.csv','city','Los Angeles','LA'+otFile)
         LA_Opentable_TS = pd.read_csv('LA'+otFile,names=['date','percnetage'])
     
+    try:
+        FL_Opentable_TS = pd.read_csv('FL'+otFile,names=['date','percnetage'])
+    except:    
+        opentable('YoY_Seated_Diner_Data.csv','state','Florida','FL'+otFile)
+        FL_Opentable_TS = pd.read_csv('FL'+otFile,names=['date','percnetage'])
+
     # plot_df(LA_Case_TS, x=LA_Case_TS['date'], y=LA_Case_TS['cases'].rolling(7).mean(), title='LA_COVID') #rolling 
     # plot_df(NYC_Case_TS, x=NYC_Case_TS['date'], y=NYC_Case_TS['cases'].rolling(7).mean(), title='NYC_COVID')
     # plot_df(NYC_Car_TS, x=NYC_Car_TS['date'], y=NYC_Car_TS['cases'].rolling(7).mean(), title='NYC_Car')
@@ -63,9 +81,17 @@ def main():
     # plot_df(Opentable_NYC_TS, x=Opentable_NYC_TS['date'], y=Opentable_NYC_TS['percnetage'].rolling(7).mean(), title='NYC_'+'Opentable_TS')
     # plot_df(Opentable_LA_TS, x=Opentable_LA_TS['date'], y=Opentable_LA_TS['percnetage'].rolling(7).mean(), title='LA_'+'_OpentableTS')
     
-    plot_df_2var(NYC_Car_TS,NYC_Opentable_TS, x1=NYC_Car_TS['date'], y1=NYC_Car_TS['cases'].rolling(7).mean(),x2=NYC_Opentable_TS['date'], y2=NYC_Opentable_TS['percnetage'].rolling(7).mean(), title='NYC OpenTable VS Vehicl Crashes')
-    plot_df_2var(LA_Car_TS,LA_Opentable_TS, x1=LA_Car_TS['date'], y1=LA_Car_TS['cases'].rolling(7).mean(),x2=LA_Opentable_TS['date'], y2=LA_Opentable_TS['percnetage'].rolling(7).mean(), title='LA OpenTable VS Vehicl Crashes')
+    plot_df_2var(NYC_Car_TS,NYC_Opentable_TS, x1=NYC_Car_TS['date'], y1=NYC_Car_TS['cases'].rolling(7).mean(),x2=NYC_Opentable_TS['date'], y2=NYC_Opentable_TS['percnetage'].rolling(7).mean(), title='NYC OpenTable VS Vehicle Crashes')
+    plot_df_2var(NYC_Car_TS,NYC_Opentable_TS, x1=NYC_Case_TS['date'], y1=NYC_Case_TS['cases'].rolling(7).mean(),x2=NYC_Opentable_TS['date'], y2=NYC_Opentable_TS['percnetage'].rolling(7).mean(), title='NYC OpenTable VS Cases')
     
+    plot_df_2var(LA_Car_TS,LA_Opentable_TS, x1=LA_Car_TS['date'], y1=LA_Car_TS['cases'].rolling(7).mean(),x2=LA_Opentable_TS['date'], y2=LA_Opentable_TS['percnetage'].rolling(7).mean(), title='LA OpenTable VS Vehicle Crashes')
+    plot_df_2var(LA_Car_TS,LA_Opentable_TS, x1=LA_Case_TS['date'], y1=LA_Case_TS['cases'].rolling(7).mean(),x2=LA_Opentable_TS['date'], y2=LA_Opentable_TS['percnetage'].rolling(7).mean(), title='LA OpenTable VS COIVD Cases')
+        
+    plot_df_2var(FL_Car_TS,FL_Opentable_TS, x1=FL_Car_TS['date'], y1=FL_Car_TS['cases'].rolling(7).mean(),x2=FL_Opentable_TS['date'], y2=FL_Opentable_TS['percnetage'].rolling(7).mean(), title='FL OpenTable VS Vehicle Crashes')
+    
+    plot_df_2var(FL_Car_TS,FL_Opentable_TS, x1=FL_Case_TS['date'], y1=FL_Case_TS['cases'].rolling(7).mean(),x2=FL_Opentable_TS['date'], y2=FL_Opentable_TS['percnetage'].rolling(7).mean(), title='FL OpenTable VS COVID Cases')
+    
+
 def plot_df_2var(df1,df2, x1, y1, x2, y2, title='', xlabel='Time', ylabel='Cases', dpi=100):
     plt.figure(figsize=(15,4), dpi=dpi)
     ax1= plt.gca()
@@ -126,7 +152,6 @@ def getCaseTSFile(location,filename,source,date_day = pd.date_range(start='2/20/
             Case_toTS[i] = daycase.values[0]
     Case_toTS.to_csv(filename, encoding='utf-8', index=True,header=False)
 
-
 def getTransTSFile(source,outputname,city):
     data = pd.read_csv(os.path.join(sourcepath,source))
     
@@ -141,8 +166,6 @@ def getTransTSFile(source,outputname,city):
         data = toTS(data['CRASH DATE'])
     
     data.to_csv(outputname, encoding='utf-8', index=True,header=False)
-    
-
 
 def toTS(records,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
     crashes = []
