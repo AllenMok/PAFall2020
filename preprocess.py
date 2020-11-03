@@ -14,7 +14,9 @@ sourcepath = "source"
 def main():
     #date_day = pd.date_range(start='1/1/2020', end='9/30/2020')
 
-    
+    car()
+   
+
     carFile = '_Car_TS.csv'
     try:
         NYC_Car_TS = pd.read_csv('NYC'+carFile,names=['date','cases'])
@@ -34,7 +36,6 @@ def main():
         print('FileNotExistError')
     
     # print(FL_Car_TS)
-
     caseFile = '_Case_TS.csv'
     try:
         NYC_Case_TS = pd.read_csv('NYC'+caseFile,names=['date','cases'])
@@ -53,7 +54,7 @@ def main():
     except :
         getCaseTSFile('FL','FL'+caseFile,'United_States_COVID-19_Cases_and_Deaths_by_State_over_Time.csv')
         FL_Case_TS = pd.read_csv('FL'+caseFile,names=['date','cases'])
-
+    
     otFile = "_Opentable_TS.csv"
     
     try:
@@ -79,30 +80,37 @@ def main():
     # plot_df(NYC_Car_TS, x=NYC_Car_TS['date'], y=NYC_Car_TS['cases'].rolling(7).mean(), title='NYC_Car')
     # plot_df(LA_Car_TS, x=LA_Car_TS['date'], y=LA_Car_TS['cases'].rolling(7).mean(), title='LA_Car')
     # plot_df(Opentable_NYC_TS, x=Opentable_NYC_TS['date'], y=Opentable_NYC_TS['percnetage'].rolling(7).mean(), title='NYC_'+'Opentable_TS')
-    # plot_df(Opentable_LA_TS, x=Opentable_LA_TS['date'], y=Opentable_LA_TS['percnetage'].rolling(7).mean(), title='LA_'+'_OpentableTS')
+    # plot_df(Opentable_LA_TS, x=Opentable_LA_TS['date'], y=Opentable_LA_TS['percnetage'].rolling(7).mean(), title='LA_'+'_OpentableTS')    
     
-    plot_df_2var(NYC_Car_TS,NYC_Opentable_TS, x1=NYC_Car_TS['date'], y1=NYC_Car_TS['cases'].rolling(7).mean(),x2=NYC_Opentable_TS['date'], y2=NYC_Opentable_TS['percnetage'].rolling(7).mean(), title='NYC OpenTable VS Vehicle Crashes')
-    plot_df_2var(NYC_Car_TS,NYC_Opentable_TS, x1=NYC_Case_TS['date'], y1=NYC_Case_TS['cases'].rolling(7).mean(),x2=NYC_Opentable_TS['date'], y2=NYC_Opentable_TS['percnetage'].rolling(7).mean(), title='NYC OpenTable VS Cases')
+    plot_df_2var(x1=NYC_Car_TS['date'], y1=NYC_Car_TS['cases'].rolling(7).mean(),x2=NYC_Opentable_TS['date'], y2=NYC_Opentable_TS['percnetage'].rolling(7).mean(), title='NYC OpenTable VS Vehicle Crashes',y1label='Crash Cases',y2label='Percnetage',line1 = 'car crashes',line2 = 'opentable')
+    plot_df_2var(x1=NYC_Case_TS['date'], y1=NYC_Case_TS['cases'].rolling(7).mean(),x2=NYC_Opentable_TS['date'], y2=NYC_Opentable_TS['percnetage'].rolling(7).mean(), title='NYC OpenTable VS COVID Cases',y1label='Covid Cases',y2label='Percnetage',line1 = 'covid case',line2 = 'opentable')
+    plot_df_2var(x1=NYC_Case_TS['date'], y1=NYC_Case_TS['cases'].rolling(7).mean(),x2=NYC_Car_TS['date'], y2=NYC_Car_TS['cases'].rolling(7).mean(), title='NYC Car Crashes VS COIVD Cases',y1label='Covid Cases',y2label='Crash Cases',line1 = 'covid case',line2 = 'car crashes')
     
-    plot_df_2var(LA_Car_TS,LA_Opentable_TS, x1=LA_Car_TS['date'], y1=LA_Car_TS['cases'].rolling(7).mean(),x2=LA_Opentable_TS['date'], y2=LA_Opentable_TS['percnetage'].rolling(7).mean(), title='LA OpenTable VS Vehicle Crashes')
-    plot_df_2var(LA_Car_TS,LA_Opentable_TS, x1=LA_Case_TS['date'], y1=LA_Case_TS['cases'].rolling(7).mean(),x2=LA_Opentable_TS['date'], y2=LA_Opentable_TS['percnetage'].rolling(7).mean(), title='LA OpenTable VS COIVD Cases')
-        
-    plot_df_2var(FL_Car_TS,FL_Opentable_TS, x1=FL_Car_TS['date'], y1=FL_Car_TS['cases'].rolling(7).mean(),x2=FL_Opentable_TS['date'], y2=FL_Opentable_TS['percnetage'].rolling(7).mean(), title='FL OpenTable VS Vehicle Crashes')
-    
-    plot_df_2var(FL_Car_TS,FL_Opentable_TS, x1=FL_Case_TS['date'], y1=FL_Case_TS['cases'].rolling(7).mean(),x2=FL_Opentable_TS['date'], y2=FL_Opentable_TS['percnetage'].rolling(7).mean(), title='FL OpenTable VS COVID Cases')
+    plot_df_2var(x1=LA_Car_TS['date'], y1=LA_Car_TS['cases'].rolling(7).mean(),x2=LA_Opentable_TS['date'], y2=LA_Opentable_TS['percnetage'].rolling(7).mean(), title='LA OpenTable VS Vehicle Crashes',y1label='Crash Cases',y2label='Percnetage',line1 = 'car crashes',line2 = 'opentable')
+    plot_df_2var(x1=LA_Case_TS['date'], y1=LA_Case_TS['cases'].rolling(7).mean(),x2=LA_Opentable_TS['date'], y2=LA_Opentable_TS['percnetage'].rolling(7).mean(), title='LA OpenTable VS COVID Cases',y1label='Covid Cases',y2label='Percnetage',line1 = 'covid case',line2 = 'opentable')
+    plot_df_2var(x1=LA_Case_TS['date'], y1=LA_Case_TS['cases'].rolling(7).mean(),x2=LA_Car_TS['date'], y2=LA_Car_TS['cases'].rolling(7).mean(), title='LA Car Crashes VS COIVD Cases',y1label='Covid Cases',y2label='Crash Cases',line1 = 'covid case',line2 = 'car crashes')
+       
+    plot_df_2var(x1=FL_Car_TS['date'], y1=FL_Car_TS['cases'].rolling(7).mean(),x2=FL_Opentable_TS['date'], y2=FL_Opentable_TS['percnetage'].rolling(7).mean(), title='FL OpenTable VS Vehicle Crashes',y1label='Crash Cases',y2label='Percnetage',line1 = 'car crashes',line2 = 'opentable')
+    plot_df_2var(x1=FL_Case_TS['date'], y1=FL_Case_TS['cases'].rolling(7).mean(),x2=FL_Opentable_TS['date'], y2=FL_Opentable_TS['percnetage'].rolling(7).mean(), title='FL OpenTable VS COVID Cases',y1label='Covid Cases',y2label='Percnetage',line1 = 'covid case',line2 = 'opentable')
+    plot_df_2var(x1=FL_Case_TS['date'], y1=FL_Case_TS['cases'].rolling(7).mean(),x2=FL_Car_TS['date'], y2=FL_Car_TS['cases'].rolling(7).mean(), title='FL Car Crashes VS COVID Cases',y1label='Covid Cases',y2label='Crash Cases',line1 = 'covid case',line2 = 'car crashes')
     
 
-def plot_df_2var(df1,df2, x1, y1, x2, y2, title='', xlabel='Time', ylabel='Cases', dpi=100):
+def plot_df_2var(x1, y1, x2, y2, title='', xlabel='Time', y1label='Cases',y2label='Cases',line1 = 'line1',line2 = 'line2', dpi=100):
     plt.figure(figsize=(15,4), dpi=dpi)
     ax1= plt.gca()
     ax2= ax1.twinx()
-    ax1.plot(x1, y1, color='red') 
-    ax2.plot(x1, y2, color='green') 
+    l1, = ax1.plot(x1, y1, color='red') 
+    l2, = ax2.plot(x1, y2, color='blue') 
     
-    ax1.set(title=title, xlabel=xlabel, ylabel=ylabel)
+    ax1.set(title=title, xlabel=xlabel, ylabel=y1label)
+    ax2.set(title=title, xlabel=xlabel, ylabel=y2label)
     ax1.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.gcf().autofmt_xdate() #
+    plt.legend([l1,l2],[line1,line2],loc='best',frameon=False)
+    
+    
     plt.savefig(title+'.png',format = 'png')
+    
     # plt.show()
 
 def plot_df(df, x, y, title='', xlabel='Time', ylabel='Cases', dpi=100):
