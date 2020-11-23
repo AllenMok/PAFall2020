@@ -16,6 +16,7 @@ def stationarytest(dataseries):
     result = adfuller(dataseries, autolag='AIC') 
     print(f'ADF Statistic: {result[0]}') 
     print(f'p-value: {result[1]}')
+    return result[1]
 
 def difference(dataset, interval=1): 
     diff = list()

@@ -12,7 +12,7 @@ def plot_df_2var(x1, y1, x2, y2, title='', xlabel='Time', y1label='Cases',y2labe
     ax1= plt.gca()
     ax2= ax1.twinx()
     l1, = ax1.plot(x1, y1, color='red') 
-    l2, = ax2.plot(x1, y2, color='blue') 
+    l2, = ax2.plot(x2, y2, color='blue') 
     
     ax1.set(title=title, xlabel=xlabel, ylabel=y1label)
     ax2.set(title=title, xlabel=xlabel, ylabel=y2label)
