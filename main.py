@@ -27,7 +27,12 @@ def main():
     dfs = [ny,la,fl]
     interpolate(dfs)
     baseplots(dfs)
+    
     grangertest(fl)
+    # plot.replotTable(fl,28)
+    # plot.replotTable(la,28)
+    # plot.replotCrash(fl,17)
+    plot.replotCrash(la,17)
 
 def baseplots(dfs,interval = 10):
     for df in dfs:
@@ -39,9 +44,9 @@ def grangertest(df):
     case_pval = granger.stationarytest(df.cases)
     crash_pval = granger.stationarytest(df.crashes)
     table_pval = granger.stationarytest(df.table)
-    # grangerCase(df.table,df.crashes,var1st = (table_pval<0.05),var2st = (crash_pval<0.05),lag = 15,cut = [30,-1]) # car gc open
-    # grangerCase(df.cases,df.table,var1st = (case_pval<0.05),var2st = (table_pval<0.05),lag = 40,cut = [30,-1]) # open gc case
-    grangerCase(df.cases,df.crashes,var1st = (case_pval<0.05),var2st = (crash_pval<0.05),lag = 40,cut = [25,-1]) # open gc case
+    # grangerCase(df.table,df.crashes,var1st = (table_pval<0.05),var2st = (crash_pval<0.05),lag = 15,cut = [25,-1]) # car gc open
+    # grangerCase(df.cases,df.table,var1st = (case_pval<0.05),var2st = (table_pval<0.05),lag = 40,cut = [25,-1]) # open gc case
+    grangerCase(df.cases,df.crashes,var1st = (case_pval<0.05),var2st = (crash_pval<0.05),lag = 40,cut = [25,-1]) # crash gc case
 
 def interpolate(dfs):
     for df in dfs:

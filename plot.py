@@ -18,9 +18,7 @@ def plot_df_2var(x1, y1, x2, y2, title='', xlabel='Time', y1label='Cases',y2labe
     ax2.set(title=title, xlabel=xlabel, ylabel=y2label)
     ax1.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.gcf().autofmt_xdate() #
-    plt.legend([l1,l2],[line1,line2],loc='best',frameon=False)
-    
-    
+    plt.legend([l1,l2],[line1,line2],loc='upper left',frameon=False)
     plt.savefig(title+'.png',format = 'png')
     
     # plt.show()
@@ -35,3 +33,18 @@ def plot_df(x, y, title='', xlabel='Time', ylabel='Cases', dpi=100):
     plt.savefig(title+'.png',format = 'png')
     # plt.show()
 
+def replotTable(df,lag = 31):
+    df = df[40:]
+    case = df.cases[lag:]
+    case.index = range(len(case))
+    table = df.table
+    table.index = range(len(table))
+    plot_df_2var(x1=table.index[:150], y1=table.values[:150],x2=case.index[:150], y2=case.values[:150], title=df.columns[0]+' time lag adjusted OpenTable & COVID Cases',y1label='Covid Cases',y2label='Percnetage',line1 = 'covid case',line2 = 'opentable')
+
+def replotCrash(df,lag = 31):
+    df = df[40:]
+    case = df.cases[lag:]
+    case.index = range(len(case))
+    crash = df.crashes
+    crash.index = range(len(crash))
+    plot_df_2var(x1=crash.index[:150], y1=crash.values[:150],x2=case.index[:150], y2=case.values[:150], title=df.columns[0]+' time lag adjusted Vehicle Crashes & COVID Cases',y1label='Covid Cases',y2label='Percnetage',line1 = 'covid case',line2 = 'opentable')
