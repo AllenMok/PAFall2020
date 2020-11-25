@@ -22,36 +22,41 @@ pd.set_option('display.max_rows', None)
 
 
 def main():
-    cars = readfile.readCars()
-    case = readfile.readCovid()
-    table = readfile.readTable()
+   
+    os.chdir('../')
+    out = 'plot_output'
+    cars = readfile.readCars('timeseries')
+    case = readfile.readCovid('timeseries')
+    table = readfile.readTable('timeseries')
     ny = pd.DataFrame({'NYC':cars[0].iloc[:,0],'crashes':cars[0].iloc[:,1],'cases':case[0].iloc[:,1],'table':table[0].iloc[:,1]})
     la = pd.DataFrame({'LA':cars[1].iloc[:,0],'crashes':cars[1].iloc[:,1],'cases':case[1].iloc[:,1],'table':table[1].iloc[:,1]})
     fl = pd.DataFrame({'FL':cars[2].iloc[:,0],'crashes':cars[2].iloc[:,1],'cases':case[2].iloc[:,1],'table':table[2].iloc[:,1]})
     dfs = [ny,la,fl]
     interpolate(dfs)
-    trends = readfile.readGoogleTrends()
+    trends = readfile.readGoogleTrends('timeseries')
     ny['trends'] = trends[0].values
     la['trends'] = trends[1].values
     fl['trends'] = trends[2].values
-    baseplots(dfs)
+    baseplots(out,dfs)
+
     # grangertest(fl)
     # plot.replotTable(fl,28)
     # plot.replotTable(la,28)
     # plot.replotCrash(fl,17)
     # plot.replotCrash(la,17)
 
-    predict.polyfit(ny,'NY')
-
+    predict.polyfit(out,ny,'NY')
+    predict.polyfit(out,fl,'FL')
+    predict.polyfit(out,la,'LA')
 
     
 
-def baseplots(dfs,interval = 10):
+def baseplots(output,dfs,interval = 10):
     for df in dfs:
-        plot.plot_df_2var(x1=df.index, y1=df.crashes.rolling(interval).mean(),x2=df.index, y2=df.table.rolling(interval).mean(), title= df.columns[0]+' OpenTable & Vehicle Crashes',y1label='Crash Cases',y2label='Percnetage',line1 = 'car crashes',line2 = 'opentable')
-        plot.plot_df_2var(x1=df.index, y1=df.cases.rolling(interval).mean(),x2=df.index, y2=df.table.rolling(interval).mean(), title=df.columns[0]+' OpenTable & COVID Cases',y1label='Covid Cases',y2label='Percnetage',line1 = 'covid case',line2 = 'opentable')
-        plot.plot_df_2var(x1=df.index, y1=df.cases.rolling(interval).mean(),x2=df.index, y2=df.crashes.rolling(interval).mean(), title=df.columns[0]+' Car Crashes & COIVD Cases',y1label='Covid Cases',y2label='Crash Cases',line1 = 'covid case',line2 = 'car crashes')
-        plot.plot_df_2var(x1=df.index, y1=df.cases.rolling(interval).mean(),x2=df.index, y2=df.trends.rolling(interval).mean(), title=df.columns[0]+' Google Trends & COIVD Cases',y1label='Covid Cases',y2label='Google Trends',line1 = 'covid case',line2 = 'trends')
+        plot.plot_df_2var(output,x1=df.index, y1=df.crashes.rolling(interval).mean(),x2=df.index, y2=df.table.rolling(interval).mean(), title= df.columns[0]+' OpenTable & Vehicle Crashes',y1label='Crash Cases',y2label='Percnetage',line1 = 'car crashes',line2 = 'opentable')
+        plot.plot_df_2var(output,x1=df.index, y1=df.cases.rolling(interval).mean(),x2=df.index, y2=df.table.rolling(interval).mean(), title=df.columns[0]+' OpenTable & COVID Cases',y1label='Covid Cases',y2label='Percnetage',line1 = 'covid case',line2 = 'opentable')
+        plot.plot_df_2var(output,x1=df.index, y1=df.cases.rolling(interval).mean(),x2=df.index, y2=df.crashes.rolling(interval).mean(), title=df.columns[0]+' Car Crashes & COIVD Cases',y1label='Covid Cases',y2label='Crash Cases',line1 = 'covid case',line2 = 'car crashes')
+        plot.plot_df_2var(output,x1=df.index, y1=df.cases.rolling(interval).mean(),x2=df.index, y2=df.trends.rolling(interval).mean(), title=df.columns[0]+' Google Trends & COIVD Cases',y1label='Covid Cases',y2label='Google Trends',line1 = 'covid case',line2 = 'trends')
 
 def grangertest(df):
     case_pval = granger.stationarytest(df.cases)

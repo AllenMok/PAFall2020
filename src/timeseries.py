@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib import dates as mdates
 
-sourcepath = "source"
+sourcepath = "data"
 
 def getCaseTSFile_NYC(location,filename,source,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
     case_data = pd.read_csv(os.path.join(sourcepath,source))
@@ -90,7 +90,7 @@ def opentable(source,type,location,filename,date_day = pd.date_range(start='2/20
     Case_toTS.to_csv(filename, encoding='utf-8', index=True,header=False)
 
 def googletrends(source,location,name,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
-    trends = pd.read_csv(os.path.join(sourcepath,source),names=name,skiprows=[0,1,2])
+    trends = pd.read_csv(source,names=name,skiprows=[0,1,2])
     timeindex = pd.to_datetime(trends.date)
     trends = pd.Series(trends.percnetage.values,index = timeindex,dtype='float64')
     series = pd.Series(0,index=date_day,dtype='float64')

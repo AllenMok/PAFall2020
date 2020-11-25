@@ -7,7 +7,7 @@ import matplotlib.ticker as ticker
 from matplotlib import dates as mdates
 
 
-def plot_df_2var(x1, y1, x2, y2, title='', xlabel='Time', y1label='Cases',y2label='Cases',line1 = 'line1',line2 = 'line2', dpi=100):
+def plot_df_2var(output,x1, y1, x2, y2, title='', xlabel='Time', y1label='Cases',y2label='Cases',line1 = 'line1',line2 = 'line2', dpi=100):
     plt.figure() #figsize=(15,4), dpi=dpi
     ax1= plt.gca()
     ax2= ax1.twinx()
@@ -20,11 +20,11 @@ def plot_df_2var(x1, y1, x2, y2, title='', xlabel='Time', y1label='Cases',y2labe
     plt.gcf().autofmt_xdate() #
     plt.legend([l1,l2],[line1,line2],loc='lower left',frameon=False)
     plt.grid(True)
-    plt.savefig(title+'.png',format = 'png')
+    plt.savefig(os.path.join(output,title+'.png'),format = 'png')
     
     # plt.show()
 
-def plot_df(x, y, title='', xlabel='Time', ylabel='Cases', dpi=100):
+def plot_df(output,x, y, title='', xlabel='Time', ylabel='Cases', dpi=100):
     plt.figure() #figsize=(15,4), dpi=dpi
     plt.plot(x, y, color='red') 
     ax= plt.gca()
@@ -32,7 +32,7 @@ def plot_df(x, y, title='', xlabel='Time', ylabel='Cases', dpi=100):
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.gcf().autofmt_xdate()
     plt.grid(True)
-    plt.savefig(title+'.png',format = 'png')
+    plt.savefig(os.path.join(output,title+'.png'),format = 'png')
     # plt.show()
 
 def replotTable(df,lag = 31):
