@@ -66,3 +66,10 @@ def readTable():
         timeseries.opentable('YoY_Seated_Diner_Data.csv','state','Florida','FL'+otFile)
         FL_Opentable_TS = pd.read_csv('FL'+otFile,names=['date','percnetage'])
     return NYC_Opentable_TS,LA_Opentable_TS,FL_Opentable_TS
+
+def readGoogleTrends():
+    gtFile = "_GoogleTrends.csv"
+    NYC_GT = timeseries.googletrends('NYC'+gtFile,'NYC',name = ['date','percnetage'])
+    LA_GT = timeseries.googletrends('LA'+gtFile,'LA',name = ['date','percnetage'])
+    FL_GT = timeseries.googletrends('FL'+gtFile,'FL',name = ['date','percnetage'])
+    return NYC_GT,LA_GT,FL_GT

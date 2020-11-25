@@ -2,20 +2,24 @@ import numpy as np
 import pandas as pd
 import time
 import os
+
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib import dates as mdates
+
+from statsmodels.tsa.stattools import adfuller, kpss
+from statsmodels.tsa.stattools import grangercausalitytests 
+
 import granger
 import plot
 import timeseries
 import readfile
-from statsmodels.tsa.stattools import adfuller, kpss
-from statsmodels.tsa.stattools import grangercausalitytests 
+import predict
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
-sourcepath = "source"
+
 
 def main():
     cars = readfile.readCars()
@@ -26,27 +30,36 @@ def main():
     fl = pd.DataFrame({'FL':cars[2].iloc[:,0],'crashes':cars[2].iloc[:,1],'cases':case[2].iloc[:,1],'table':table[2].iloc[:,1]})
     dfs = [ny,la,fl]
     interpolate(dfs)
+    trends = readfile.readGoogleTrends()
+    ny['trends'] = trends[0].values
+    la['trends'] = trends[1].values
+    fl['trends'] = trends[2].values
     baseplots(dfs)
-    
-    grangertest(fl)
+    # grangertest(fl)
     # plot.replotTable(fl,28)
     # plot.replotTable(la,28)
     # plot.replotCrash(fl,17)
-    plot.replotCrash(la,17)
+    # plot.replotCrash(la,17)
+
+    predict.polyfit(ny,'NY')
+
+
+    
 
 def baseplots(dfs,interval = 10):
     for df in dfs:
-        plot.plot_df_2var(x1=df.index, y1=df.cases.rolling(interval).mean(),x2=df.index, y2=df.table.rolling(interval).mean(), title= df.columns[0]+' OpenTable & Vehicle Crashes',y1label='Crash Cases',y2label='Percnetage',line1 = 'car crashes',line2 = 'opentable')
+        plot.plot_df_2var(x1=df.index, y1=df.crashes.rolling(interval).mean(),x2=df.index, y2=df.table.rolling(interval).mean(), title= df.columns[0]+' OpenTable & Vehicle Crashes',y1label='Crash Cases',y2label='Percnetage',line1 = 'car crashes',line2 = 'opentable')
         plot.plot_df_2var(x1=df.index, y1=df.cases.rolling(interval).mean(),x2=df.index, y2=df.table.rolling(interval).mean(), title=df.columns[0]+' OpenTable & COVID Cases',y1label='Covid Cases',y2label='Percnetage',line1 = 'covid case',line2 = 'opentable')
         plot.plot_df_2var(x1=df.index, y1=df.cases.rolling(interval).mean(),x2=df.index, y2=df.crashes.rolling(interval).mean(), title=df.columns[0]+' Car Crashes & COIVD Cases',y1label='Covid Cases',y2label='Crash Cases',line1 = 'covid case',line2 = 'car crashes')
+        plot.plot_df_2var(x1=df.index, y1=df.cases.rolling(interval).mean(),x2=df.index, y2=df.trends.rolling(interval).mean(), title=df.columns[0]+' Google Trends & COIVD Cases',y1label='Covid Cases',y2label='Google Trends',line1 = 'covid case',line2 = 'trends')
 
 def grangertest(df):
     case_pval = granger.stationarytest(df.cases)
     crash_pval = granger.stationarytest(df.crashes)
     table_pval = granger.stationarytest(df.table)
-    # grangerCase(df.table,df.crashes,var1st = (table_pval<0.05),var2st = (crash_pval<0.05),lag = 15,cut = [25,-1]) # car gc open
-    # grangerCase(df.cases,df.table,var1st = (case_pval<0.05),var2st = (table_pval<0.05),lag = 40,cut = [25,-1]) # open gc case
-    grangerCase(df.cases,df.crashes,var1st = (case_pval<0.05),var2st = (crash_pval<0.05),lag = 40,cut = [25,-1]) # crash gc case
+    grangerCase(df.table,df.crashes,var1st = (table_pval<0.05),var2st = (crash_pval<0.05),lag = 15,cut = [25,-1]) # car gc open
+    grangerCase(df.cases,df.table,var1st = (case_pval<0.05),var2st = (table_pval<0.05),lag = 40,cut = [25,-1]) # open gc case
+    grangerCase(df.cases,df.crashes,var1st = (case_pval<0.05),var2st = (crash_pval<0.05),lag = 40,cut = [25,-1]) # crash gc cas
 
 def interpolate(dfs):
     for df in dfs:
