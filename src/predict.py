@@ -3,38 +3,76 @@ import numpy as np
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from matplotlib.font_manager import FontProperties
 from sklearn.preprocessing import MinMaxScaler
+from scipy import stats
+import random
 
-def polyfit(output,df,cityname):
-    y_train = df[['cases']]
-    x_train = df[['table','crashes','trends']]
 
-    x_train = x_train.rolling(10).mean()[10:]
-    y_train = y_train.rolling(10).mean()[10:]
-    
+def polyfit(output,df,cityname,crashlag = 0,tablelag = 0,dpi=100):
+    if crashlag == 0 and tablelag == 0:
+        x = df[['table','crashes','trends']]
+        y = df[['cases']]
+        
+    else:
+        lagcrashes= df.crashes[crashlag:].reset_index()
+        lagtable = df.table[tablelag:].reset_index()
+        trends = df.trends.reset_index()
+        
+        minlen = min(len(lagcrashes),len(lagtable),len(trends))
+        
+        x = pd.concat([lagcrashes[:minlen],lagtable[:minlen],trends[:minlen]],axis = 1)
+        y = df[['cases']][:minlen]
+
     scaler = MinMaxScaler()
-    x_train = scaler.fit_transform(x_train)
+    x = scaler.fit_transform(x)
 
     poly = PolynomialFeatures(degree=3)
-    x_train = poly.fit_transform(x_train)
-    # poly.fit(x_train,y_train)
+    x = poly.fit_transform(x)
     
+    x_train,x_test,y_train,y_test = train_test_split(x,y,test_size = 0.1,random_state=9999)
+    # x_train = x_train.rolling(10).mean()
+    # y_train = y_train.rolling(10).mean()
+
     regression = LinearRegression()
     regression.fit(x_train,y_train)
-    y_predict = regression.predict(x_train)
-    print(regression.score(x_train,y_train))
+    y_predict_train = regression.predict(x_train)
+    print("R Square for training set: "+str(regression.score(x_train,y_train)))
+
+    y_predict_test = regression.predict(x_test)
+    print("R Square for testting set: "+str(regression.score(x_test,y_test)))
+
+    regression.fit(x,y)
+    y_predict = regression.predict(x)
+    print("R Square for all data: "+str(regression.score(x,y)))
+
+    # y_predict = pd.Series(y_predict.reshape(-1)).rolling(10).mean()
+    y_predict = pd.Series(y_predict.reshape(-1))
+    # y_train = y_train.rolling(10).mean()
     
-    y_predict = pd.Series(y_predict.reshape(-1)).rolling(10).mean()
-    plt.figure()
+
+    plt.figure(figsize=(15,4), dpi=dpi)
     plt.title('Polynomial Regression of Cases')
     plt.xlabel('Day')
     plt.ylabel('Case Number')
     plt.grid(True)
-    l1, = plt.plot(range(len(y_train)),y_train.cases)
+    l1, = plt.plot(range(len(y)),y.cases)
     l2, = plt.plot(range(len(y_predict)),y_predict,color = "red")
     plt.legend([l1,l2],['Origin Data','Prediction'],loc='lower left',frameon=False)
-    plt.savefig(os.path.join(output,cityname+' Prediction Line.png'),format = 'png')
-    # plt.show()
+    if crashlag != 0 and tablelag != 0:
+        title = cityname+' Prediction Line'+'with lag '+str(tablelag)+' days on OpenTable and lag '+str(crashlag)+' days on Traffic Accident'
+        plt.title(title)
+        plt.savefig(os.path.join(output,title+'.png'),format = 'png')
+    else:
+        title = cityname+' Prediction Line without lag'
+        plt.title(title)
+        plt.savefig(os.path.join(output,title+'.png'),format = 'png')
+    
+    return y_predict
+
+def ttest(x,y):
+    print(stats.levene(x,y))
+    print(stats.ttest_ind(x,y,equal_var=False))

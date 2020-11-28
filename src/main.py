@@ -37,18 +37,27 @@ def main():
     ny['trends'] = trends[0].values
     la['trends'] = trends[1].values
     fl['trends'] = trends[2].values
-    baseplots(out,dfs)
+    # baseplots(out,dfs)
 
-    # grangertest(fl)
-    # plot.replotTable(fl,28)
-    # plot.replotTable(la,28)
-    # plot.replotCrash(fl,17)
-    # plot.replotCrash(la,17)
+    # grangertest(la)
+    # plot.replotTable(out,fl,lag = 21)
+    # plot.replotTable(out,la,lag = 21)
+    # plot.replotTable(out,ny,lag = 21)
+    # plot.replotCrash(out,fl,16)
+    # plot.replotCrash(out,la,16)
+    # plot.replotCrash(out,ny,16)
 
-    predict.polyfit(out,ny,'NY')
-    predict.polyfit(out,fl,'FL')
-    predict.polyfit(out,la,'LA')
+    ny_nolag = predict.polyfit(out,ny,'NY')
+    ny_lag = predict.polyfit(out,ny,'NY',crashlag = 16,tablelag = 21)
+    predict.ttest(ny_lag,ny_nolag)
 
+    la_nolag = predict.polyfit(out,fl,'LA')
+    la_lag = predict.polyfit(out,la,'LA',crashlag = 16,tablelag = 21)
+    predict.ttest(la_lag,la_nolag)
+
+    fl_nolag = predict.polyfit(out,fl,'FL')
+    fl_lag = predict.polyfit(out,fl,'FL',crashlag = 16,tablelag = 21)
+    predict.ttest(fl_lag,fl_nolag)
     
 
 def baseplots(output,dfs,interval = 10):
@@ -62,9 +71,9 @@ def grangertest(df):
     case_pval = granger.stationarytest(df.cases)
     crash_pval = granger.stationarytest(df.crashes)
     table_pval = granger.stationarytest(df.table)
-    grangerCase(df.table,df.crashes,var1st = (table_pval<0.05),var2st = (crash_pval<0.05),lag = 15,cut = [25,-1]) # car gc open
+    # grangerCase(df.table,df.crashes,var1st = (table_pval<0.05),var2st = (crash_pval<0.05),lag = 15,cut = [25,-1]) # car gc open
     grangerCase(df.cases,df.table,var1st = (case_pval<0.05),var2st = (table_pval<0.05),lag = 40,cut = [25,-1]) # open gc case
-    grangerCase(df.cases,df.crashes,var1st = (case_pval<0.05),var2st = (crash_pval<0.05),lag = 40,cut = [25,-1]) # crash gc cas
+    # grangerCase(df.cases,df.crashes,var1st = (case_pval<0.05),var2st = (crash_pval<0.05),lag = 40,cut = [25,-1]) # crash gc cas
 
 def interpolate(dfs):
     for df in dfs:
@@ -90,7 +99,5 @@ def grangerCase(var1,var2,var1st = False,var2st = False,window = 10,lag = 40,cut
     result = grangercausalitytests(df[[0,1]],maxlag = lag)
     return df_norm
     
-
-
 if __name__ == '__main__':
     main()
