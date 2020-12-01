@@ -10,14 +10,17 @@ from matplotlib.font_manager import FontProperties
 from sklearn.preprocessing import MinMaxScaler
 from scipy import stats
 import random
+import math
 
 
 def polyfit(output,df,cityname,crashlag = 0,tablelag = 0,dpi=100):
     if crashlag == 0 and tablelag == 0:
+        print(cityname+' without lag')
         x = df[['table','crashes','trends']]
         y = df[['cases']]
         
     else:
+        print(cityname+' with lag')
         lagcrashes= df.crashes[crashlag:].reset_index()
         lagtable = df.table[tablelag:].reset_index()
         trends = df.trends.reset_index()
@@ -37,18 +40,27 @@ def polyfit(output,df,cityname,crashlag = 0,tablelag = 0,dpi=100):
     # x_train = x_train.rolling(10).mean()
     # y_train = y_train.rolling(10).mean()
 
+    
     regression = LinearRegression()
     regression.fit(x_train,y_train)
     y_predict_train = regression.predict(x_train)
+    mse_train = np.sum((y_predict_train - y_train) ** 2) / len(y_train)
+    rmse_train = math.sqrt(mse_train)
     print("R Square for training set: "+str(regression.score(x_train,y_train)))
-
+    print(rmse_train)
     y_predict_test = regression.predict(x_test)
+    mse_test = np.sum((y_predict_test - y_test) ** 2) / len(y_test)
+    rmse_test = math.sqrt(mse_test)
     print("R Square for testting set: "+str(regression.score(x_test,y_test)))
+    print(rmse_test)
 
     regression.fit(x,y)
     y_predict = regression.predict(x)
+    mse_all = np.sum((y_predict - y) ** 2) / len(y)
+    rmse_all = math.sqrt(mse_all)
     print("R Square for all data: "+str(regression.score(x,y)))
-
+    print(rmse_all)
+    
     # y_predict = pd.Series(y_predict.reshape(-1)).rolling(10).mean()
     y_predict = pd.Series(y_predict.reshape(-1))
     # y_train = y_train.rolling(10).mean()
@@ -71,7 +83,7 @@ def polyfit(output,df,cityname,crashlag = 0,tablelag = 0,dpi=100):
         plt.title(title)
         plt.savefig(os.path.join(output,title+'.png'),format = 'png')
     
-    return y_predict
+    return y_predict_test.reshape(-1)
 
 def ttest(x,y):
     print(stats.levene(x,y))

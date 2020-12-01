@@ -47,14 +47,15 @@ def main():
     # plot.replotCrash(out,la,16)
     # plot.replotCrash(out,ny,16)
 
-    ny_nolag = predict.polyfit(out,ny,'NY')
-    ny_lag = predict.polyfit(out,ny,'NY',crashlag = 16,tablelag = 21)
-    predict.ttest(ny_lag,ny_nolag)
+    # ny_nolag = predict.polyfit(out,ny,'NY')
+    # ny_lag = predict.polyfit(out,ny,'NY',crashlag = 16,tablelag = 21)
+    # predict.ttest(ny_lag,ny_nolag)
 
-    la_nolag = predict.polyfit(out,fl,'LA')
-    la_lag = predict.polyfit(out,la,'LA',crashlag = 16,tablelag = 21)
-    predict.ttest(la_lag,la_nolag)
+    # la_nolag = predict.polyfit(out,la,'LA')
+    # la_lag = predict.polyfit(out,la,'LA',crashlag = 16,tablelag = 21)
+    # predict.ttest(la_lag,la_nolag)
 
+    
     fl_nolag = predict.polyfit(out,fl,'FL')
     fl_lag = predict.polyfit(out,fl,'FL',crashlag = 16,tablelag = 21)
     predict.ttest(fl_lag,fl_nolag)
