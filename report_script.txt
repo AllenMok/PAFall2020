@@ -1,0 +1,47 @@
+Script
+After the data preparation process finished, we go into the nextstep of modeling.
+
+P9:
+Here is the workflow of the modeling process. We have finished step 1 in the last section, now in modeling this step we doing the Granger causality analysis between OpenTable and traffic accident versus covid case. The result of Granger causality will provide parameters for the predictive model.
+
+P10:
+There are two questions we would like to answer by Granger causality:
+1)Whether OpenTable or car crashes correlate to the Covid-19 cases or not? 
+2)  If correlated, What is the time lag of covid cases to OpenTable and traffic accident?
+
+By Granger causality, the correlation between variables can be proven, and also we can select a suitable time lag for each variable for the building of predictive modeling.
+
+
+P11:
+The result of Granger causality analysis reveals that both OpenTable and traffic accident provides predictive information to the covid case. And they have a different time lag to the covid case. The lag to OpenTable ranges from 19-22 days, we select 21 days as the parameter of modeling. The lag to traffic accident is 16 days, this result applies to all three areas.
+
+P12:
+We re-adjusted the time axis according to the time lag, and the new visualization results show in Los Angeles and Florida, which makes the curves of the dependent and independent variables more consistent. The New York City data does not show this phenomenon. We believe that the slower opening speed and strong epidemic prevention and control efforts are a reasonable explanation. Since we get the parameter we need, we can go to the next step of building a predictive model.
+
+P13:
+Many models can make numerical predictions. However, considering the amount of data in this case (less than 300 records), it is insufficient for training models of neural networks. Therefore, we choose the polynomial regression model as the target, which can obtain better accuracy with less data.
+
+Two groups of models is been built and compared. 
+Group one based on E3 below and considered the time lag, which gets from the Granger causality analysis.
+Group two directly based on the original data, without considering the time lag. 
+
+P14:
+The results visualized as the following plots. We can see that the prediction of the model which considered the time lag ( which on the left side) is better than the model doesn’t (which on the right side). The detail of the evaluation will be stated in the next section.
+
+P15:
+The root mean squared error (REMS) and R squared are introduced to measure the results of prediction.
+The root mean squared error used to evaluate the deviate of prediction value to original value, lower the better.
+R squared used to evaluate the percentage of the variance in the dependent variable that is predictable from the independent variable, higher the better.
+
+We can see the time lag significantly improves the R squared of every set of every area. The time lag also improves the RMSE of every set of every area except the test set for LA.
+
+P16:
+OpenTable reservation rate and traffic accident case Granger cause COVID-19 cases. There are 21 days time lag between Covid-19 cases and traffic accident cases, and also 16 days time lag between Covid-19 cases and OpenTable reservation rate, these time lags improves the prediction accuracy of the polynomial model of predicting Covid-19 cases. 
+
+P17:
+Beside the conclusion we made. We have some further discussion about the advantages and disadvantages of this project. 
+One biggest advantage is this research provides a reference of the timeline of diseases outbreak, can be a suggestion to the government about the length of lockdown, and also the control of restaurant open.
+In this case, a disadvantage is the data volume we get is relatively small, it limits the model option and may limit the accuracy of the model.
+
+P18:
+The above is our report. Thank for listening. Does any questions?

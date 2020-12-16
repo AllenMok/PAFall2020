@@ -6,19 +6,15 @@ from statsmodels.tsa.stattools import adfuller, kpss
 from statsmodels.tsa.stattools import grangercausalitytests 
 
 
-def plot_df(df, x, y, title="", xlabel='Year', ylabel='Inflation Rate', dpi=100):
-    plt.figure(figsize=(15,4), dpi=dpi)
-    plt.plot(x, y, color='tab:red') 
-    plt.gca().set(title=title, xlabel=xlabel, ylabel=ylabel) 
-    plt.show()
-
 def stationarytest(dataseries):
+    # test data is stationary or not
     result = adfuller(dataseries, autolag='AIC') 
     print(f'ADF Statistic: {result[0]}') 
     print(f'p-value: {result[1]}')
     return result[1]
 
 def difference(dataset, interval=1): 
+    # preprocessing step to transform data into stationary
     diff = list()
     for i in range(interval, len(dataset)):
         value = dataset[i] - dataset[i - interval] 

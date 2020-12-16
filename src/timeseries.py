@@ -9,25 +9,25 @@ from matplotlib import dates as mdates
 
 sourcepath = "data"
 
-def getCaseTSFile_NYC(location,filename,source,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
-    case_data = pd.read_csv(os.path.join(sourcepath,source))
-    case_data = case_data[['DATE_OF_INTEREST','CASE_COUNT']]
-    case_data['DATE_OF_INTEREST'] = pd.to_datetime(case_data['DATE_OF_INTEREST'],format = '%m/%d/%Y')
+# def getCaseTSFile_NYC(location,filename,source,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
+#     # count and transfer raw coivd case data in NYC into time series data from Feb 20 to Sep 20
+#     case_data = pd.read_csv(os.path.join(sourcepath,source))
+#     case_data = case_data[['DATE_OF_INTEREST','CASE_COUNT']]
+#     case_data['DATE_OF_INTEREST'] = pd.to_datetime(case_data['DATE_OF_INTEREST'],format = '%m/%d/%Y')
     
     
-    Case_toTS = pd.Series(0,index=date_day)
+#     Case_toTS = pd.Series(0,index=date_day)
 
-    for i, v in Case_toTS.items():
-
-        # case_data[case_data['submission_date']==i]
-        daycase = case_data[case_data['DATE_OF_INTEREST']==i]['CASE_COUNT']
-        if daycase.size == 0:
-            Case_toTS[i] = np.NaN
-        else:
-            Case_toTS[i] = daycase.values[0]
-    Case_toTS.to_csv(filename, encoding='utf-8', index=True,header=False)
+#     for i, v in Case_toTS.items():
+#         daycase = case_data[case_data['DATE_OF_INTEREST']==i]['CASE_COUNT']
+#         if daycase.size == 0:
+#             Case_toTS[i] = np.NaN
+#         else:
+#             Case_toTS[i] = daycase.values[0]
+#     Case_toTS.to_csv(filename, encoding='utf-8', index=True,header=False)
     
 def getCaseTSFile(location,filename,source,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
+    # count and transfer raw case data in LA and FL into time series data from Feb 20 to Sep 20
     case_data = pd.read_csv(os.path.join(sourcepath,source))
     case_data = case_data[['submission_date','state','new_case']]
     case_data = case_data[case_data['state'].str.contains(location)]
@@ -46,7 +46,8 @@ def getCaseTSFile(location,filename,source,date_day = pd.date_range(start='2/20/
             Case_toTS[i] = daycase.values[0]
     Case_toTS.to_csv(filename, encoding='utf-8', index=True,header=False)
 
-def getTransTSFile(source,outputname,city):
+def getTransTSFile(source,outputname,city,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
+    # count and transfer raw accident case data in NYC and LA into time series data from Feb 20 to Sep 20
     data = pd.read_csv(os.path.join(sourcepath,source))
     
     if city == 'LA':
@@ -57,11 +58,12 @@ def getTransTSFile(source,outputname,city):
     elif city == 'NYC':
         data = data[['CRASH DATE']]
         data['CRASH DATE'] = pd.to_datetime(data['CRASH DATE'],format='%m/%d/%y')
-        data = toTS(data['CRASH DATE'])
+        data = toTS(data['CRASH DATE'],date_day)
     
     data.to_csv(outputname, encoding='utf-8', index=True,header=False)
 
 def toTS(records,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
+    # count and transfer data into time series
     crashes = []
     for i in date_day:
         count = 0
@@ -72,6 +74,7 @@ def toTS(records,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
     return pd.Series(crashes,index=date_day)
 
 def opentable(source,type,location,filename,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
+    # count and transfer raw opentable data into time series data from Feb 20 to Sep 20
     optable = pd.read_csv(os.path.join(sourcepath,source))
     optable = optable[optable['Type'].str.contains(type)]
     optable = optable[optable['Name'].str.contains(location)]
@@ -90,6 +93,7 @@ def opentable(source,type,location,filename,date_day = pd.date_range(start='2/20
     Case_toTS.to_csv(filename, encoding='utf-8', index=True,header=False)
 
 def googletrends(source,location,name,date_day = pd.date_range(start='2/20/2020', end='9/30/2020')):
+    # count and transfer raw google trends score data into time series data from Feb 20 to Sep 20
     trends = pd.read_csv(source,names=name,skiprows=[0,1,2])
     timeindex = pd.to_datetime(trends.date)
     trends = pd.Series(trends.percnetage.values,index = timeindex,dtype='float64')

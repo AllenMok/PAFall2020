@@ -3,7 +3,32 @@ import pandas as pd
 import timeseries
 import os
 
-def readCars(source):
+# global source  
+# global origin  
+source = 'timeseries'
+origin = 'data'
+
+def readCars2019():
+    carFile = '_Car_TS.csv'
+    try:
+        NYC_Car_TS = pd.read_csv(os.path.join(source,'NYC_2019'+carFile),names=['date','cases'])
+    except :
+        print('FileNotExistError')
+
+    try:
+        LA_Car_TS = pd.read_csv(os.path.join(source,'LA_2019'+carFile),names=['date','cases'])
+    except :
+        print('FileNotExistError')
+
+    try:
+        FL_Car_TS = pd.read_csv(os.path.join(source,'FL_2019'+carFile),names=['date','cases'])
+    except:
+        print('FileNotExistError')
+
+    return (NYC_Car_TS,LA_Car_TS,FL_Car_TS)
+
+def readCars():
+    # read in traffic accident cases data, if no time series data, generate time series data first
     carFile = '_Car_TS.csv'
     try:
         NYC_Car_TS = pd.read_csv(os.path.join(source,'NYC'+carFile),names=['date','cases'])
@@ -24,7 +49,8 @@ def readCars(source):
 
     return (NYC_Car_TS,LA_Car_TS,FL_Car_TS)
 
-def readCovid(source):
+def readCovid():
+    # read in covid cases data, if no time series data, generate time series data first
     caseFile = '_Case_TS.csv'
     try:
         NYC_Case_TS = pd.read_csv(os.path.join(source,'NYC'+caseFile),names=['date','cases'])
@@ -47,7 +73,8 @@ def readCovid(source):
 
     return NYC_Case_TS,LA_Case_TS,FL_Case_TS
 
-def readTable(source):
+def readTable():
+    # read in opentable reservation rate data, if no time series data, generate time series data first
     otFile = "_Opentable_TS.csv" 
     try:
         NYC_Opentable_TS = pd.read_csv(os.path.join(source,'NYC'+otFile),names=['date','percnetage'])
@@ -68,7 +95,8 @@ def readTable(source):
         FL_Opentable_TS = pd.read_csv(os.path.join(source,'FL'+otFile),names=['date','percnetage'])
     return NYC_Opentable_TS,LA_Opentable_TS,FL_Opentable_TS
 
-def readGoogleTrends(source):
+def readGoogleTrends():
+    # read in google trends search data, if no time series data, generate time series data first
     gtFile = "_GoogleTrends.csv"
     NYC_GT = timeseries.googletrends(os.path.join(source,'NYC'+gtFile),'NYC',name = ['date','percnetage'])
     LA_GT = timeseries.googletrends(os.path.join(source,'LA'+gtFile),'LA',name = ['date','percnetage'])

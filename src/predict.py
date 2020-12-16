@@ -14,6 +14,10 @@ import math
 
 
 def polyfit(output,df,cityname,crashlag = 0,tablelag = 0,dpi=100):
+    ''' by the Polynomial model from sklearn
+        read in dataframe a city and training the model
+        outout measurements and plot compare predicting reslut and real value
+    '''
     if crashlag == 0 and tablelag == 0:
         print(cityname+' without lag')
         x = df[['table','crashes','trends']]
